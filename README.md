@@ -1,99 +1,54 @@
-🚗 Rentalin ID - Aplikasi Penyewaan Mobil Java
-Rentalin ID adalah aplikasi desktop berbasis Java + Swing yang digunakan untuk mencatat transaksi penyewaan mobil. Aplikasi ini menggunakan MySQL sebagai basis data untuk menyimpan data pelanggan dan transaksi.
+# 🚗 Rentalin ID — Aplikasi Penyewaan Mobil (Java + Swing)
 
-✨ Fitur Utama
-📋 Input Biodata Penyewa & Pilih Metode Pembayaran
+**Rentalin ID** adalah aplikasi desktop sederhana untuk mengelola proses penyewaan mobil. Dibuat menggunakan Java dan Swing sebagai GUI, serta MySQL sebagai database penyimpanan data pelanggan dan transaksi.
 
-🚘 Pilih Mobil dari daftar yang tersedia (data mobil bersifat hardcoded)
+---
 
-📊 Riwayat Transaksi disimpan ke database dan dapat dilihat kapan saja
+## ✨ Fitur Utama
 
-🗑 Hapus Riwayat Terakhir atau hapus semua riwayat
+- 📋 Input data penyewa & metode pembayaran
+- 🚘 Pilih mobil dari daftar (hardcoded)
+- 🧾 Menyimpan transaksi ke database
+- 📜 Menampilkan riwayat transaksi
+- 🗑 Menghapus transaksi terakhir atau semua transaksi
+- ♻️ Auto reset ID jika semua data dihapus
 
-🔄 ID otomatis reset saat data kosong (termasuk ID pelanggan dan transaksi)
+---
 
-💾 Terhubung langsung ke MySQL database
+## ⚙️ Persiapan & Instalasi
 
-🧱 Struktur Proyek
-bash
-Salin
-Edit
-rentalinid/
-├── com.example.rentalin.id.model/
-│   ├── Mobil.java
-│   ├── Pelanggan.java
-│   └── Transaksi.java
-├── com.example.rentalin.id.database/
-│   └── DatabaseHandler.java
-├── com.example.rentalin.id.service/
-│   └── SistemPenyewaan.java
-├── com.example.rentalin.id.gui/
-│   ├── MainFrame.java
-│   ├── HalamanPilihMobilPanel.java
-│   ├── HalamanDeskripsiMobilPanel.java
-│   ├── HalamanIsiBiodataPanel.java
-│   └── HalamanRiwayatPanel.java
-└── com.example.rentalin.id/
-    └── App.java
-⚙️ Pengaturan Awal
-Instal MySQL dan buat database:
+### 1. Buat Database MySQL
 
-sql
-Salin
-Edit
+```sql
 CREATE DATABASE rentalin;
-Pengaturan DatabaseHandler (sudah disiapkan default):
 
-java
-Salin
-Edit
+### 2. Pastikan pengaturan database di DatabaseHandler.java sesuai:
+
 private static final String DB_URL = "jdbc:mysql://localhost:3306/rentalin";
 private static final String USER = "root";
 private static final String PASS = "";
-Struktur tabel otomatis dibuat oleh initDatabase() saat program pertama kali dijalankan:
 
-sql
-Salin
-Edit
-Tabel pelanggan: id, nama, nik
-Tabel transaksi: id, pelanggan_id (FK), mobil, lama_sewa, total
-▶️ Cara Menjalankan
-Import project ke IDE seperti IntelliJ IDEA atau NetBeans.
+### 3. Struktur tabel dibuat otomatis saat pertama kali program dijalankan:
 
-Pastikan koneksi database MySQL aktif dan database rentalin tersedia.
+- Tabel pelanggan
+- id (PK), nama, nik
 
-Jalankan App.java sebagai entry point:
+- Tabel transaksi
+- id (PK), pelanggan_id (FK), mobil, lama_sewa, total
 
-java
-Salin
-Edit
-public class App {
-    public static void main(String[] args) {
-        DatabaseHandler.initDatabase();
-        SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
-    }
-}
-🧪 Fitur CRUD & Behavior
-Tambah Transaksi:
+### 3. Menjalankan Aplikasi
 
-Data pelanggan disimpan ke tabel pelanggan.
+1. Buka project ini di IDE favorit kamu (NetBeans, IntelliJ, VS Code, dsb).
+2. Jalankan App.java.
+3. GUI akan terbuka dan kamu bisa langsung menggunakannya.
 
-Transaksi disimpan dengan foreign key pelanggan_id.
+---
 
-Hapus Transaksi:
+## 💡 Catatan Teknis
 
-hapusTransaksiTerakhir() akan hapus satu transaksi terakhir beserta pelanggan-nya.
-
-hapusSemuaTransaksi() akan bersihkan seluruh isi transaksi & pelanggan, dan reset auto-increment ID.
-
-Riwayat:
-
-Menampilkan semua transaksi dari database, bukan dari memory.
-
-🧊 Catatan
-Data mobil tidak disimpan ke database (bersifat hardcoded).
-
-Cocok sebagai latihan pemrograman Java OOP + GUI + database (CRUD).
-
-Jika ingin produksi: pertimbangkan input mobil dari DB juga.
-
+- Data mobil tidak berasal dari database (masih hardcoded di Java).
+- Transaksi dan pelanggan disimpan ke database MySQL.
+- Jika semua transaksi dihapus, maka:
+    - Data pelanggan ikut dihapus.
+    - ID akan di-reset (AUTO_INCREMENT = 1 kembali).
+- Riwayat transaksi ditarik langsung dari database setiap kali ditampilkan (bukan dari memori).
