@@ -32,12 +32,11 @@ public class DatabaseHandler {
             String sqlTransaksi = "CREATE TABLE IF NOT EXISTS transaksi (" +
                                   "id INT AUTO_INCREMENT PRIMARY KEY," +
                                   "pelanggan_id INT," +
-                                  "no_polisi VARCHAR(20)," +
-                                  "merk VARCHAR(50)," +
+                                  "mobil VARCHAR(50)," +
                                   "tipe VARCHAR(50)," +
                                   "lama_sewa INT," +
-                                  "total INT," +
                                   "metode_pembayaran VARCHAR(50)," +
+                                  "total INT," +
                                   "FOREIGN KEY (pelanggan_id) REFERENCES pelanggan(id))";
 
             stmt.execute(sqlPelanggan);
@@ -65,12 +64,13 @@ public class DatabaseHandler {
 
     public static void insertTransaksi(Transaksi t) {
         try (Connection conn = connect()) {
-            String sql = "INSERT INTO transaksi(pelanggan_id, mobil, lama_sewa, total) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO transaksi(pelanggan_id, mobil, lama_sewa, metode_pembayaran, total) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, t.getPelanggan().getId());
             stmt.setString(2, t.getMobil().getMerk() + " " + t.getMobil().getTipe());
             stmt.setInt(3, t.getLamaSewa());
-            stmt.setInt(4, t.getTotalHarga());
+            stmt.setString(4, t.getMetodePembayaran());
+            stmt.setInt(5, t.getTotalHarga());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -94,8 +94,13 @@ public class DatabaseHandler {
 
                 Pelanggan p = new Pelanggan(rs.getString("nama"), rs.getString("nik"));
                 p.setId(rs.getInt("pelanggan_id"));
-                Mobil m = new Mobil("", merk, tipe, "", 0, 0); // noPolisi kosong
-                Transaksi t = new Transaksi(p, m, rs.getInt("lama_sewa"), "");
+                Mobil m = new Mobil("", merk, tipe, "", 0, 0);
+                Transaksi t = new Transaksi(
+                    p,
+                    m,
+                    rs.getInt("lama_sewa"),
+                    rs.getString("metode_pembayaran")
+                );
                 t.setTotalHarga(rs.getInt("total"));
                 list.add(t);
             }

@@ -5,19 +5,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.util.List;
+import java.io.File;
+import java.awt.Desktop;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.example.rentalin.id.database.DatabaseHandler;
 import com.example.rentalin.id.model.Transaksi;
+import com.example.rentalin.id.service.Report;
 
 public class HalamanRiwayatPanel extends JPanel {
 
@@ -49,6 +45,36 @@ public class HalamanRiwayatPanel extends JPanel {
         JButton btnKembali = new JButton("← Kembali");
         btnKembali.addActionListener(e -> frame.showIntro());
         bottomPanel.add(btnKembali, BorderLayout.WEST);
+
+        JButton btnCetak = new JButton("🖨 Cetak PDF");
+        btnCetak.addActionListener(e -> {
+            List<Transaksi> transaksiList = DatabaseHandler.ambilSemuaTransaksi();
+            if (transaksiList.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Tidak ada transaksi untuk dicetak.");
+                return;
+            }
+
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle("Simpan PDF");
+            chooser.setSelectedFile(new java.io.File("riwayat_transaksi.pdf"));
+            chooser.setFileFilter(new FileNameExtensionFilter("PDF Documents", "pdf"));
+
+            int result = chooser.showSaveDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                String filePath = chooser.getSelectedFile().getAbsolutePath();
+                if (!filePath.endsWith(".pdf")) {
+                    filePath += ".pdf";
+                }
+                Report.cetakRiwayatKePDF(transaksiList, filePath);
+                try {
+                    Desktop.getDesktop().open(new File(filePath));
+                } catch (java.io.IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Gagal membuka file PDF:\n" + ex.getMessage());
+                }
+                JOptionPane.showMessageDialog(this, "PDF berhasil disimpan di:\n" + filePath);
+            }
+        });
+        bottomPanel.add(btnCetak, BorderLayout.CENTER);
 
         JButton btnHapusSemua = new JButton("🧹 Hapus Semua Riwayat");
         btnHapusSemua.addActionListener(e -> {
